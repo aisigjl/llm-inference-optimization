@@ -16,7 +16,7 @@ It compares:
 The default config already points to:
 
 ```text
-/home/WangChanghui/wch/model/Qwen3-4B-Instruct-2507
+/home/WangChanghui/wch/model/Llama-3.1-8B-Instruct
 ```
 
 Run the smallest Transformers smoke benchmark first:
@@ -108,14 +108,14 @@ configs/model.yaml
 Change:
 
 ```yaml
-model_path: /home/WangChanghui/wch/model/Qwen3-4B-Instruct-2507
+model_path: /home/WangChanghui/wch/model/Llama-3.1-8B-Instruct
 ```
 
 For a 24GB GPU, recommended first choices:
 
-- `Qwen3-4B-Instruct`
-- `Qwen3-4B-Instruct-AWQ`
-- `Qwen3-4B-Instruct-GPTQ-Int4`
+- `Llama-3.1-8B-Instruct`
+- `Llama-3.1-8B-Instruct-AWQ`
+- `Llama-3.1-8B-Instruct-GPTQ-Int4`
 - `Llama-3.1-8B-Instruct`
 
 Start with `max_model_len: 4096`. If you hit OOM, try `2048`.
@@ -160,8 +160,8 @@ python scripts/run_transformers_baseline.py \
 In terminal A:
 
 ```bash
-export MODEL_PATH=/home/WangChanghui/wch/model/Qwen3-4B-Instruct-2507
-export SERVED_MODEL_NAME=local-model
+export MODEL_PATH=/home/WangChanghui/wch/model/Llama-3.1-8B-Instruct
+export SERVED_MODEL_NAME=llama3-1-8b-instruct
 export MAX_MODEL_LEN=4096
 export DTYPE=bfloat16
 bash scripts/run_vllm_server.sh
@@ -193,8 +193,8 @@ Use an already-quantized local model directory.
 AWQ:
 
 ```bash
-export MODEL_PATH=/home/WangChanghui/wch/model/Qwen3-4B-Instruct-2507-AWQ
-export SERVED_MODEL_NAME=local-model
+export MODEL_PATH=/home/WangChanghui/wch/model/Llama-3.1-8B-Instruct-AWQ
+export SERVED_MODEL_NAME=llama3-1-8b-instruct
 export QUANTIZATION=awq
 bash scripts/run_vllm_server.sh
 ```
@@ -214,8 +214,8 @@ python scripts/run_api_benchmark.py \
 GPTQ:
 
 ```bash
-export MODEL_PATH=/home/WangChanghui/wch/model/Qwen3-4B-Instruct-2507-GPTQ-Int4
-export SERVED_MODEL_NAME=local-model
+export MODEL_PATH=/home/WangChanghui/wch/model/Llama-3.1-8B-Instruct-GPTQ-Int4
+export SERVED_MODEL_NAME=llama3-1-8b-instruct
 export QUANTIZATION=gptq
 bash scripts/run_vllm_server.sh
 ```

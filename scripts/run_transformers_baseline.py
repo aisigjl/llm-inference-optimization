@@ -56,6 +56,9 @@ def load_model(model_path: str, dtype: str, quant: str, trust_remote_code: bool)
     if tokenizer.pad_token_id is None:
         tokenizer.pad_token = tokenizer.eos_token
     model = AutoModelForCausalLM.from_pretrained(model_path, **kwargs)
+    model.generation_config.do_sample = False
+    model.generation_config.temperature = None
+    model.generation_config.top_p = None
     model.eval()
     return tokenizer, model
 

@@ -1,5 +1,5 @@
 vllm:
-  served_model_name: local-model
+  served_model_name: llama3-1-8b-instruct
   max_num_seqs: 128
   enable_prefix_caching: true
   disable_log_requests: true
