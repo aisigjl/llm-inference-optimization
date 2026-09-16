@@ -1,4 +1,4 @@
-name: llm-infer-bench
+name: llmInfer
 channels:
   - nvidia
   - pytorch
