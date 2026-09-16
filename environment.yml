@@ -1,0 +1,14 @@
+name: llm-infer-bench
+channels:
+  - nvidia
+  - pytorch
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - pip:
+      - --extra-index-url https://download.pytorch.org/whl/cu124
+      - torch==2.5.1+cu124
+      - torchvision==0.20.1+cu124
+      - torchaudio==2.5.1+cu124
+      - -r requirements.txt

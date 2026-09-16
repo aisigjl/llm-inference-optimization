@@ -1,0 +1,13 @@
+# Change this to your local model directory.
+model_path: /absolute/path/to/your/local/Qwen2.5-7B-Instruct
+model_name: local-qwen2.5-7b-instruct
+
+# Good default for a 24GB GPU.
+dtype: float16
+trust_remote_code: true
+max_model_len: 4096
+
+# For vLLM serving.
+host: 127.0.0.1
+port: 8000
+gpu_memory_utilization: 0.90

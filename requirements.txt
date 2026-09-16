@@ -1,0 +1,33 @@
+# Python 3.10
+#
+# Important for CUDA 12.4:
+# Install PyTorch first with the cu124 wheel, then install this file.
+# See README.md for the exact commands.
+
+transformers==4.48.3
+accelerate==1.3.0
+tokenizers==0.21.0
+sentencepiece==0.2.0
+protobuf==5.29.3
+safetensors==0.5.2
+
+# Quantization for Transformers baseline.
+bitsandbytes==0.45.2
+optimum==1.24.0
+auto-gptq==0.7.1
+
+# vLLM version chosen for Python 3.10 + CUDA 12.4-era stacks.
+# If your machine rejects this wheel, check README.md for fallback notes.
+vllm==0.7.3
+
+# Benchmarking and reporting.
+aiohttp==3.11.11
+PyYAML==6.0.2
+numpy==1.26.4
+pandas==2.2.3
+matplotlib==3.10.0
+seaborn==0.13.2
+tqdm==4.67.1
+psutil==6.1.1
+nvidia-ml-py==12.560.30
+openai==1.59.7

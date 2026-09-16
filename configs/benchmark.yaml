@@ -1,0 +1,24 @@
+dataset:
+  mode: synthetic
+  system_prompt: "You are a helpful assistant."
+  prompts:
+    - "Explain why KV cache matters for large language model inference."
+    - "Give a concise comparison between AWQ, GPTQ, INT8, and FP16 inference."
+    - "Write a short technical plan for deploying a local LLM inference service."
+
+generation:
+  max_new_tokens: 128
+  temperature: 0.0
+  top_p: 1.0
+
+matrix:
+  input_lens: [128, 512, 2048]
+  output_lens: [64, 128]
+  batch_sizes: [1, 2, 4]
+  concurrencies: [1, 4, 8, 16, 32]
+  num_requests: 64
+
+output:
+  raw_dir: results/raw
+  tables_dir: results/tables
+  figures_dir: results/figures
