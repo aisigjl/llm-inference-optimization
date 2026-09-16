@@ -60,6 +60,26 @@ python scripts/summarize_results.py
 python scripts/plot_results.py
 ```
 
+## Current Benchmark Results
+
+The current completed benchmark uses `Llama-3.1-8B-Instruct` and includes Transformers BF16, vLLM BF16 serving, and Transformers INT8/INT4 quantization.
+
+Key results are documented in:
+
+- `report/benchmark_report.md`
+- `report/resume_summary.md`
+- `report/small_matrix_analysis.md`
+- `results/tables/summary.csv`
+- `results/figures/*.png`
+
+Headline findings:
+
+- vLLM reaches `274.89 output tok/s` at `input_len=512`, `output_len=64`, `concurrency=8`, about `2.97x` the best Transformers batch baseline in the same matrix.
+- vLLM reaches `853.30 output tok/s` at `concurrency=32` for 512-token prompts, with P95 latency around `2.18s`.
+- For 2048-token prompts, vLLM concurrency 8 reaches `248.63 output tok/s`, about `6.61x` the best Transformers long-context baseline.
+- Transformers INT4 reduces peak GPU memory by about `61.7%` versus BF16 in the 512-token benchmark.
+
+
 ## 1. Create Conda Environment
 
 Use Python 3.10.

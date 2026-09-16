@@ -8,4 +8,5 @@ results/figures/*
 !results/raw/.gitkeep
 !results/tables/.gitkeep
 !results/figures/.gitkeep
-
+core.*
+core.python.*

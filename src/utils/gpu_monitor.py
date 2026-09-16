@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import threading
 import time
 from dataclasses import dataclass
@@ -22,6 +23,7 @@ class GpuSnapshot:
 class GpuMonitor:
     def __init__(self, gpu_index: int = 0, interval_sec: float = 0.2) -> None:
         self.gpu_index = gpu_index
+        self.nvml_gpu_index = self._resolve_nvml_gpu_index(gpu_index)
         self.interval_sec = interval_sec
         self.snapshots: list[GpuSnapshot] = []
         self._stop = threading.Event()
@@ -32,10 +34,25 @@ class GpuMonitor:
         if pynvml is None:
             return self
         pynvml.nvmlInit()
-        self._handle = pynvml.nvmlDeviceGetHandleByIndex(self.gpu_index)
+        self._handle = pynvml.nvmlDeviceGetHandleByIndex(self.nvml_gpu_index)
         self._thread = threading.Thread(target=self._loop, daemon=True)
         self._thread.start()
         return self
+
+    @staticmethod
+    def _resolve_nvml_gpu_index(gpu_index: int) -> int:
+        visible_devices = os.environ.get("CUDA_VISIBLE_DEVICES")
+        if not visible_devices:
+            return gpu_index
+
+        devices = [device.strip() for device in visible_devices.split(",") if device.strip()]
+        if gpu_index >= len(devices):
+            return gpu_index
+
+        # NVML indexes physical GPUs. CUDA indexes the filtered visible list.
+        # For CUDA_VISIBLE_DEVICES=1, logical cuda:0 should monitor NVML GPU 1.
+        mapped = devices[gpu_index]
+        return int(mapped) if mapped.isdigit() else gpu_index
 
     def __exit__(self, *_: object) -> None:
         self._stop.set()
