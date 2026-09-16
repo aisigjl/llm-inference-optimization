@@ -35,7 +35,8 @@ def summarize_request_metrics(
     ttfts = [r.ttft_sec for r in ok_records if r.ttft_sec is not None]
     input_tokens = sum(r.input_tokens for r in ok_records)
     output_tokens = sum(r.output_tokens for r in ok_records)
-    total_time = max(latencies) if latencies else 0.0
+    wall_time = None if extra is None else extra.get("wall_time_sec")
+    total_time = float(wall_time) if isinstance(wall_time, (int, float)) and wall_time > 0 else (max(latencies) if latencies else 0.0)
 
     summary: dict[str, Any] = {
         "num_requests": len(records),

@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import sys
+import time
 from pathlib import Path
 
 import aiohttp
@@ -102,6 +103,7 @@ async def run() -> None:
     temperature = float(bench_cfg["generation"].get("temperature", 0.0))
     top_p = float(bench_cfg["generation"].get("top_p", 1.0))
 
+    benchmark_start = time.perf_counter()
     with GpuMonitor(args.gpu_index) as monitor:
         async with aiohttp.ClientSession() as session:
             tasks = [
@@ -119,6 +121,7 @@ async def run() -> None:
                 for i, prompt in enumerate(prompts)
             ]
             records = await tqdm_asyncio.gather(*tasks, desc="API benchmark")
+    wall_time_sec = time.perf_counter() - benchmark_start
 
     tag = args.tag or f"{args.backend}_{args.quant}_in{args.input_len}_out{max_tokens}_c{args.concurrency}"
     summary = summarize_request_metrics(
@@ -130,6 +133,7 @@ async def run() -> None:
             "input_len_target": args.input_len,
             "output_len_target": max_tokens,
             "concurrency": args.concurrency,
+            "wall_time_sec": wall_time_sec,
             "peak_gpu_memory_mb": monitor.peak_used_mb,
             "mean_gpu_utilization": monitor.mean_gpu_utilization,
         },

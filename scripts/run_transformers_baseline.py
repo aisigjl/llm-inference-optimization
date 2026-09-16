@@ -52,6 +52,7 @@ def load_model(model_path: str, dtype: str, quant: str, trust_remote_code: bool)
         )
         kwargs.pop("torch_dtype", None)
     tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=trust_remote_code, use_fast=True)
+    tokenizer.padding_side = "left"
     if tokenizer.pad_token_id is None:
         tokenizer.pad_token = tokenizer.eos_token
     model = AutoModelForCausalLM.from_pretrained(model_path, **kwargs)
@@ -81,11 +82,13 @@ def main() -> None:
     prompts = build_prompts(base_prompts, args.input_len, args.num_requests)
     records: list[RequestMetric] = []
 
+    benchmark_start = time.perf_counter()
     with GpuMonitor(args.gpu_index) as monitor:
         for start_idx in tqdm(range(0, len(prompts), args.batch_size), desc="Transformers baseline"):
             batch_prompts = prompts[start_idx : start_idx + args.batch_size]
             encoded = tokenizer(batch_prompts, return_tensors="pt", padding=True, truncation=True).to(model.device)
             input_counts = encoded["attention_mask"].sum(dim=1).tolist()
+            prompt_width = int(encoded["input_ids"].shape[-1])
             start = time.perf_counter()
             try:
                 with torch.inference_mode():
@@ -100,7 +103,7 @@ def main() -> None:
                 per_request_latency = elapsed / len(batch_prompts)
                 for offset, output in enumerate(outputs):
                     input_tokens = int(input_counts[offset])
-                    output_tokens = max(0, int(output.shape[-1]) - input_tokens)
+                    output_tokens = max(0, int(output.shape[-1]) - prompt_width)
                     records.append(
                         RequestMetric(
                             request_id=start_idx + offset,
@@ -126,6 +129,7 @@ def main() -> None:
                         )
                     )
 
+    wall_time_sec = time.perf_counter() - benchmark_start
     tag = args.tag or f"transformers_{args.quant}_in{args.input_len}_out{max_new_tokens}_bs{args.batch_size}"
     summary = summarize_request_metrics(
         records,
@@ -136,6 +140,7 @@ def main() -> None:
             "input_len_target": args.input_len,
             "output_len_target": max_new_tokens,
             "batch_size": args.batch_size,
+            "wall_time_sec": wall_time_sec,
             "peak_gpu_memory_mb": monitor.peak_used_mb,
             "mean_gpu_utilization": monitor.mean_gpu_utilization,
         },

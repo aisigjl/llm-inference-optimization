@@ -10,12 +10,62 @@ It compares:
 - vLLM AWQ / GPTQ / FP8 serving when the local model supports it
 - Batch size, context length, concurrency, latency, throughput, and GPU memory
 
+
+## Quick Start On Current Machine
+
+The default config already points to:
+
+```text
+/home/WangChanghui/wch/model/Qwen3-4B-Instruct-2507
+```
+
+Run the smallest Transformers smoke benchmark first:
+
+```bash
+cd /home/WangChanghui/wch/llm/llm-inference-optimization
+conda activate llmInfer
+
+python scripts/run_transformers_baseline.py \
+  --input-len 128 \
+  --output-len 32 \
+  --batch-size 1 \
+  --num-requests 4 \
+  --quant none \
+  --tag smoke_transformers_bf16
+
+python scripts/summarize_results.py
+```
+
+Then start vLLM in another terminal:
+
+```bash
+cd /home/WangChanghui/wch/llm/llm-inference-optimization
+conda activate llmInfer
+bash scripts/run_vllm_server.sh
+```
+
+Run a small API benchmark:
+
+```bash
+python scripts/run_api_benchmark.py \
+  --input-len 128 \
+  --output-len 32 \
+  --concurrency 1 \
+  --num-requests 4 \
+  --backend vllm \
+  --quant none \
+  --tag smoke_vllm_bf16
+
+python scripts/summarize_results.py
+python scripts/plot_results.py
+```
+
 ## 1. Create Conda Environment
 
 Use Python 3.10.
 
 ```bash
-cd /Users/boom/Desktop/code/for_work/llm-inference-optimization
+cd /home/WangChanghui/wch/llm/llm-inference-optimization
 conda create -n llm-infer-bench python=3.10 -y
 conda activate llm-infer-bench
 ```
@@ -58,14 +108,14 @@ configs/model.yaml
 Change:
 
 ```yaml
-model_path: /absolute/path/to/your/local/Qwen2.5-7B-Instruct
+model_path: /home/WangChanghui/wch/model/Qwen3-4B-Instruct-2507
 ```
 
 For a 24GB GPU, recommended first choices:
 
-- `Qwen2.5-7B-Instruct`
-- `Qwen2.5-7B-Instruct-AWQ`
-- `Qwen2.5-7B-Instruct-GPTQ-Int4`
+- `Qwen3-4B-Instruct`
+- `Qwen3-4B-Instruct-AWQ`
+- `Qwen3-4B-Instruct-GPTQ-Int4`
 - `Llama-3.1-8B-Instruct`
 
 Start with `max_model_len: 4096`. If you hit OOM, try `2048`.
@@ -110,10 +160,10 @@ python scripts/run_transformers_baseline.py \
 In terminal A:
 
 ```bash
-export MODEL_PATH=/absolute/path/to/your/local/Qwen2.5-7B-Instruct
+export MODEL_PATH=/home/WangChanghui/wch/model/Qwen3-4B-Instruct-2507
 export SERVED_MODEL_NAME=local-model
 export MAX_MODEL_LEN=4096
-export DTYPE=float16
+export DTYPE=bfloat16
 bash scripts/run_vllm_server.sh
 ```
 
@@ -143,7 +193,7 @@ Use an already-quantized local model directory.
 AWQ:
 
 ```bash
-export MODEL_PATH=/absolute/path/to/your/local/Qwen2.5-7B-Instruct-AWQ
+export MODEL_PATH=/home/WangChanghui/wch/model/Qwen3-4B-Instruct-2507-AWQ
 export SERVED_MODEL_NAME=local-model
 export QUANTIZATION=awq
 bash scripts/run_vllm_server.sh
@@ -164,7 +214,7 @@ python scripts/run_api_benchmark.py \
 GPTQ:
 
 ```bash
-export MODEL_PATH=/absolute/path/to/your/local/Qwen2.5-7B-Instruct-GPTQ-Int4
+export MODEL_PATH=/home/WangChanghui/wch/model/Qwen3-4B-Instruct-2507-GPTQ-Int4
 export SERVED_MODEL_NAME=local-model
 export QUANTIZATION=gptq
 bash scripts/run_vllm_server.sh

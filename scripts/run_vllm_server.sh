@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-MODEL_PATH="${MODEL_PATH:-/absolute/path/to/your/local/Qwen2.5-7B-Instruct}"
-SERVED_MODEL_NAME="${SERVED_MODEL_NAME:-local-model}"
+MODEL_PATH="${MODEL_PATH:-/home/WangChanghui/wch/model/Llama-3.1-8B-Instruct}"
+SERVED_MODEL_NAME="${SERVED_MODEL_NAME:-llama3-1-8b-instruct}"
 HOST="${HOST:-127.0.0.1}"
 PORT="${PORT:-8000}"
-DTYPE="${DTYPE:-float16}"
+DTYPE="${DTYPE:-bfloat16}"
 MAX_MODEL_LEN="${MAX_MODEL_LEN:-4096}"
 GPU_MEMORY_UTILIZATION="${GPU_MEMORY_UTILIZATION:-0.90}"
 QUANTIZATION="${QUANTIZATION:-}"
